@@ -146,7 +146,7 @@ This library may not be for you, if:
 
 [google maps engine]: http://www.google.com.au/enterprise/mapsearth/products/mapsengine.html
 [maps-engine-api]: https://developers.google.com/maps-engine/
-[issue tracker]: https://github.com/googlemaps/mapsengine-api-java-client/issues
+[issue tracker]: https://github.com/googlemaps/mapsengine-api-java-wrapper/issues
 [generator]: https://code.google.com/p/google-apis-client-generator/
 [geojson]: http://geojson.org/
 [backoff-policy]: http://javadoc.google-http-java-client.googlecode.com/hg/1.17.0-rc/index.html?com/google/api/client/util/ExponentialBackOff.html
