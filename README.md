@@ -23,11 +23,13 @@ Features
 [GeoJSON] defines coordinates using multi-dimensional lists of doubles, which is exactly
 how the machine-generated libraries present them.  Here's our alternative.
 
-    // Creating a polygon
-    Polygon poly = Polygon.createSimplePolygon(Arrays.asList(
-        new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(0, 0)
-    ));
-    Feature feature = poly.asFeature(properties);
+```java
+// Creating a polygon
+Polygon poly = Polygon.createSimplePolygon(Arrays.asList(
+    new Point(0, 0), new Point(1, 0), new Point(1, 1), new Point(0, 1), new Point(0, 0)
+));
+Feature feature = poly.asFeature(properties);
+```
 
 The objects are currently very lightweight.  If you want to see some more functionality,
 add a request to the [Issue Tracker].
@@ -40,12 +42,13 @@ sending `quotaExceeded` responses.  This request initializer will monitor respon
 check for a failure due to rate limiting and retry with back-off, using the [default
 exponential back-off policy][backoff-policy].
 
-    HttpRequestInitializer retrier = new BackOffWhenRateLimitedRequestInitializer();
+```java
+HttpRequestInitializer retrier = new BackOffWhenRateLimitedRequestInitializer();
 
-    Mapsengine engine = new Mapsengine.Builder(httpTransport, jsonFactory, retrier)
-        .setApplicationName("Google-MapsEngineSample/1.0")
-        .build();
-
+Mapsengine engine = new Mapsengine.Builder(httpTransport, jsonFactory, retrier)
+    .setApplicationName("Google-MapsEngineSample/1.0")
+    .build();
+```
 
 ### HttpRequestInitializer chaining
 
@@ -54,19 +57,21 @@ required for authenticating requests with OAuth credentials.  Rather than forcin
 write your own custom initializer to handle everything, you can chain them together using
 `HttpRequestInitializerPipeline`, like so.
 
-    List<HttpRequestInitializer> httpInits = new ArrayList<HttpRequestInitializer>();
+```java
+List<HttpRequestInitializer> httpInits = new ArrayList<HttpRequestInitializer>();
 
-    // perform oauth steps
-    GoogleCredential credential = authorize();
-    httpInits.add(credential);
+// perform oauth steps
+GoogleCredential credential = authorize();
+httpInits.add(credential);
 
-    // ensure we retry if throttled
-    httpInits.add(new BackOffWhenRateLimitedRequestInitializer());
-    
-    HttpRequestInitializer pipeline = new HttpRequestInitializerPipeline(httpInits);
-    Mapsengine engine = new Mapsengine.Builder(transport, jsonFactory, pipeline)
-        .setApplicationName("Google-MapsEngineSample/1.0")
-        .build();
+// ensure we retry if throttled
+httpInits.add(new BackOffWhenRateLimitedRequestInitializer());
+
+HttpRequestInitializer pipeline = new HttpRequestInitializerPipeline(httpInits);
+Mapsengine engine = new Mapsengine.Builder(transport, jsonFactory, pipeline)
+    .setApplicationName("Google-MapsEngineSample/1.0")
+    .build();
+```
 
 ### Where clause escaping
 
@@ -75,18 +80,19 @@ familiar with SQL.  One side-effect is that it does require the developer to pro
 escape any query data that has come from an untrusted source (such as a text box on
 a web page).  The `Security` class comes with an escaping and quoting function to help.
 
-    String untrustedInput = "Alice' OR gx_id = 1234 AND name <> '";
+```java
+String untrustedInput = "Alice' OR gx_id = 1234 AND name <> '";
 
-    // bad!
-    FeaturesListResponse badResponse = engine.tables().features().list(TABLE_ID)
-        .setWhere("name = '" + untrustedInput + "'")
-        .execute();
+// bad!
+FeaturesListResponse badResponse = engine.tables().features().list(TABLE_ID)
+    .setWhere("name = '" + untrustedInput + "'")
+    .execute();
 
-    // good!
-    FeaturesListResponse goodResponse = engine.tables().features().list(TABLE_ID)
-        .setWhere(String.format("name = %s", Security.escapeAndQuoteString(untrustedInput)))
-        .execute();
-
+// good!
+FeaturesListResponse goodResponse = engine.tables().features().list(TABLE_ID)
+    .setWhere(String.format("name = %s", Security.escapeAndQuoteString(untrustedInput)))
+    .execute();
+```
 
 How to use
 ----------
@@ -96,21 +102,25 @@ that the direct JAR download depends on the [Google API client] and the [Google 
 client] libraries for Java.  You'll need to download and add them to your project too.
 
 ### Maven
-    <dependency>
-        <groupId>com.google.mapsengine</groupId>
-        <artifactId>wrapper</artifactId>
-        <version>(insert latest version)</version>
-    </dependency>
+```xml
+<dependency>
+    <groupId>com.google.mapsengine</groupId>
+    <artifactId>wrapper</artifactId>
+    <version>(insert latest version)</version>
+</dependency>
+```
 
 ### Gradle
-    repositories {
-        mavenCentral()
-    }
+```groovy
+repositories {
+    mavenCentral()
+}
 
-    dependencies {
-        compile 'com.google.mapsengine:wrapper:(insert latest version)'
-        ...
-    }
+dependencies {
+    compile 'com.google.mapsengine:wrapper:(insert latest version)'
+    ...
+}
+```
 
 You can find the latest version by searching [Maven Central] or [Gradle, Please].
 
