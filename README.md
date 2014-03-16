@@ -1,4 +1,4 @@
-Maps Engine library wrapper for Java
+Maps Engine API wrapper lib for Java
 ====================================
 
 Use [Google Maps Engine]?  Use the [API][maps-engine-api]?
