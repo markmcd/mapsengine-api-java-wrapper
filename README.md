@@ -6,7 +6,7 @@ Use Java?  This helper library provides a little bit of sugar to make your life 
 
 Background
 ----------
-Traditionally Google release client libraries for each of their APIs, for a
+Traditionally Google release client libraries for each of their APIs across a
 number of different languages.  These [libraries are generated][generator] based
 on static API definitions that map the request/response fields to types and
 parameters.
