@@ -1,5 +1,5 @@
-Maps Engine API client library wrapper for Java
-===============================================
+Maps Engine API library wrapper for Java
+========================================
 
 Use [Google Maps Engine]?  Use the [API][maps-engine-api]?
 Use Java?  This helper library provides a little bit of sugar to make your life easier.
