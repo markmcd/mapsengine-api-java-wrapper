@@ -1,7 +1,28 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'com.google.maps'
+version = 'v1-1.0.0-rc'
 
 repositories {
     mavenCentral()
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+  
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
 }
 
 dependencies {
@@ -24,8 +45,53 @@ sourceSets {
     test {
         java {
             srcDir 'javatests/'
-            // AllTests are redundant when using Gradle
-            exclude '**/AllTests.java'
         }
     }
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+	    
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+  
+            pom.project {
+                name 'Google Maps Engine client library wrapper'
+                packaging 'jar'
+                description 'Provides some extra sugar for the machine-generated Java library for Google Maps Engine. ' +
+                    'https://developers.google.com/api-client-library/java/apis/mapsengine/v1'
+                url 'https://github.com/googlemaps/mapsengine-api-java-wrapper'
+
+                scm {
+                    url 'scm:git@github.com:googlemaps/mapsengine-api-java-wrapper.git'
+                    connection 'scm:git@github.com:googlemaps/mapsengine-api-java-wrapper.git'
+                    developerConnection 'scm:git@github.com:googlemaps/mapsengine-api-java-wrapper.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'markmcd'
+                        name 'Mark McDonald'
+                        url 'https://google.com/+MarkMcDonald0'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+        sign configurations.archives
+}
+
