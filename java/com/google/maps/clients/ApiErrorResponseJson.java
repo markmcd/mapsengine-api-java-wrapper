@@ -5,8 +5,8 @@ import com.google.api.client.util.Key;
 import java.util.List;
 
 /**
- * An error response as returned by the API.  Used for serialisation via {@link com.google.api
- * .client.json.JsonFactory}.
+ * An error response as returned by the API.  Used for serialisation via
+ * {@link com.google.api.client.json.JsonFactory}.
  */
 public class ApiErrorResponseJson {
   @Key public ApiErrorCollectionJson error;

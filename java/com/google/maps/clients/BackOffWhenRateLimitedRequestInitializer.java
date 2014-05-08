@@ -12,7 +12,7 @@ import java.io.IOException;
  * quota exceeded error. If you wish to tweak the options any further,
  * consider writing your own HttpUnsuccessfulResponseHandler.
  *
- * @see {@link com.google.api.client.util.ExponentialBackOff}
+ * {@link com.google.api.client.util.ExponentialBackOff}
  */
 public class BackOffWhenRateLimitedRequestInitializer implements HttpRequestInitializer {
 
