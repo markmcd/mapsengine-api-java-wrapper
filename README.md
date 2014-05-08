@@ -45,7 +45,7 @@ exponential back-off policy][backoff-policy].
 ```java
 HttpRequestInitializer retrier = new BackOffWhenRateLimitedRequestInitializer();
 
-Mapsengine engine = new Mapsengine.Builder(httpTransport, jsonFactory, retrier)
+MapsEngine engine = new MapsEngine.Builder(httpTransport, jsonFactory, retrier)
     .setApplicationName("Google-MapsEngineSample/1.0")
     .build();
 ```
@@ -68,7 +68,7 @@ httpInits.add(credential);
 httpInits.add(new BackOffWhenRateLimitedRequestInitializer());
 
 HttpRequestInitializer pipeline = new HttpRequestInitializerPipeline(httpInits);
-Mapsengine engine = new Mapsengine.Builder(transport, jsonFactory, pipeline)
+MapsEngine engine = new MapsEngine.Builder(transport, jsonFactory, pipeline)
     .setApplicationName("Google-MapsEngineSample/1.0")
     .build();
 ```
@@ -104,8 +104,8 @@ client] libraries for Java.  You'll need to download and add them to your projec
 ### Maven
 ```xml
 <dependency>
-    <groupId>com.google.mapsengine</groupId>
-    <artifactId>wrapper</artifactId>
+    <groupId>com.google.maps</groupId>
+    <artifactId>mapsengine-api-java-wrapper</artifactId>
     <version>(insert latest version)</version>
 </dependency>
 ```
@@ -117,7 +117,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.mapsengine:wrapper:(insert latest version)'
+    compile 'com.google.maps:mapsengine-api-java-wrapper:(insert latest version)'
     ...
 }
 ```
