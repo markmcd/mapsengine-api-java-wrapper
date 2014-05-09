@@ -151,7 +151,7 @@ This library may not be for you, if:
 [geojson]: http://geojson.org/
 [backoff-policy]: http://javadoc.google-http-java-client.googlecode.com/hg/1.17.0-rc/index.html?com/google/api/client/util/ExponentialBackOff.html
 [httprequestinitializer]: http://javadoc.google-http-java-client.googlecode.com/hg/1.17.0-rc/index.html?com/google/api/client/http/HttpRequestInitializer.html
-[latest jar]: TODO!
+[latest jar]: http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mapsengine-api-java-wrapper%22
 [google api client]: https://code.google.com/p/google-api-java-client/
 [google http client]: https://code.google.com/p/google-http-java-client/
 [maven central]: http://search.maven.org/
