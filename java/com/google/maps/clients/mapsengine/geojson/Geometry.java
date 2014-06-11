@@ -55,8 +55,8 @@ public abstract class Geometry {
     } else if (geoJsonGeometry instanceof GeoJsonGeometryCollection) {
       return new GeometryCollection(shellFeature);
     } else {
-      throw new IllegalArgumentException("Geometry type is not known: " +
-          geoJsonGeometry.getType());
+      throw new IllegalArgumentException("Geometry type is not known: "
+          + geoJsonGeometry.getType());
     }
   }
 }

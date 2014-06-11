@@ -6,10 +6,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Provides a mechanism for running multiple HttpRequestInitializers in sequence.
