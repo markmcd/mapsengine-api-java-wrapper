@@ -8,8 +8,8 @@ import com.google.api.client.util.ExponentialBackOff;
 import java.io.IOException;
 
 /**
- * Syntactic short-cut that sets up HTTP request retries when an API response errors due to a
- * quota exceeded error. If you wish to tweak the options any further,
+ * Syntactic short-cut that sets up HTTP request retries when an API response errors due to
+ * quota exceeded errors or back-end errors. If you wish to tweak the options any further,
  * consider writing your own HttpUnsuccessfulResponseHandler.
  *
  * {@link com.google.api.client.util.ExponentialBackOff}

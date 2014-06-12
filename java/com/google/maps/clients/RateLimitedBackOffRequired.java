@@ -8,6 +8,8 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -15,8 +17,9 @@ import java.util.Scanner;
  */
 public class RateLimitedBackOffRequired implements BackOffRequired {
 
-  protected static final String QUOTA_EXCEEDED_REASON = "rateLimitExceeded";
-  protected static final String BACKEND_REASON = "backendError";
+  protected static final List<String> QUOTA_EXCEEDED_REASONS =
+      Arrays.asList("rateLimitExceeded", "userRateLimitExceeded");
+  private static final int BACKEND_ERROR_CODE = 503;
 
   private JsonFactory jsonFactory;
 
@@ -39,6 +42,11 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
   @Override
   public boolean isRequired(HttpResponse httpResponse) {
     try {
+      // Test for a 503 back-end error first, without consuming the InputStream
+      if (httpResponse.getStatusCode() == BACKEND_ERROR_CODE) {
+        return true;
+      }
+
       // Copy the response body, leaving the stream open so that HttpResponse.execute() can use it.
       Scanner scanner = new Scanner(httpResponse.getContent(),
           httpResponse.getContentCharset().toString()).useDelimiter("\\A");
@@ -57,7 +65,7 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
       if (apiError != null && apiError.error != null && apiError.error.errors != null
           && apiError.error.errors.size() == 1) {
         String reason = apiError.error.errors.get(0).reason;
-        if (QUOTA_EXCEEDED_REASON.equals(reason) || BACKEND_REASON.equals(reason)) {
+        if (QUOTA_EXCEEDED_REASONS.contains(reason)) {
           return true;
         }
       }
