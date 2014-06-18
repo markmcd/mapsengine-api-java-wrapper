@@ -16,6 +16,8 @@ import java.io.IOException;
  */
 public class BackOffWhenRateLimitedRequestInitializer implements HttpRequestInitializer {
 
+  protected RateLimitedBackOffRequired backOffRequired;
+
   @Override
   public void initialize(HttpRequest httpRequest) throws IOException {
     // use the built in exponential back-off classes
@@ -23,8 +25,23 @@ public class BackOffWhenRateLimitedRequestInitializer implements HttpRequestInit
         new HttpBackOffUnsuccessfulResponseHandler(new ExponentialBackOff());
 
     // use this wrapper's custom back-off logic
-    failHandler.setBackOffRequired(new RateLimitedBackOffRequired());
+    backOffRequired = new RateLimitedBackOffRequired();
+    failHandler.setBackOffRequired(backOffRequired);
 
     httpRequest.setUnsuccessfulResponseHandler(failHandler);
+  }
+
+  /**
+   * Retrieve the last response body. Responses are cached with each processed request to ensure
+   * that the data from an InputStream that has been consumed can be made available.
+   *
+   * You should only rely on the data in this method when catching a GoogleJsonResponseException
+   * and when the getContent or getDetails calls return null. This is not thread-safe.
+   *
+   * @return The full response body from the last JSON error response handled by the
+   * UnsuccessfulResponseHandler.
+   */
+  public String getLastResponseBody() {
+    return backOffRequired.responseBody;
   }
 }

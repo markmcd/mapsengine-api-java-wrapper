@@ -21,6 +21,7 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
       Arrays.asList("rateLimitExceeded", "userRateLimitExceeded");
   private static final int BACKEND_ERROR_CODE = 503;
 
+  protected String responseBody;
   private JsonFactory jsonFactory;
 
   /**
@@ -50,15 +51,15 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
       // Copy the response body, leaving the stream open so that HttpResponse.execute() can use it.
       Scanner scanner = new Scanner(httpResponse.getContent(),
           httpResponse.getContentCharset().toString()).useDelimiter("\\A");
-      String body = scanner.next();
-      if (body == null || body.isEmpty()) {
+      responseBody = scanner.next();
+      if (responseBody == null || responseBody.isEmpty()) {
         return false;
       }
 
       // Parse the response as JSON.
       JsonObjectParser jsonParser = jsonFactory.createJsonObjectParser();
       ApiErrorResponseJson apiError = jsonParser.parseAndClose(
-          new ByteArrayInputStream(body.getBytes()), httpResponse.getContentCharset(),
+          new ByteArrayInputStream(responseBody.getBytes()), httpResponse.getContentCharset(),
           ApiErrorResponseJson.class);
 
       // we will only retry if the *only* failure reason was due to a known error

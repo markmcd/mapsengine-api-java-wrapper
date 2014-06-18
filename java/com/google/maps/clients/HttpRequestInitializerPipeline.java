@@ -6,10 +6,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Provides a mechanism for running multiple HttpRequestInitializers in sequence.
@@ -41,5 +38,14 @@ public class HttpRequestInitializerPipeline implements HttpRequestInitializer {
     for (HttpRequestInitializer initializer : initializers) {
       initializer.initialize(httpRequest);
     }
+  }
+
+  /**
+   * Return the HttpRequestInitializer at the position specified.
+   * @param index  The index, ordering consistent with use in the constructor.
+   * @return The HttpRequestInitializer at position specified.
+   */
+  public HttpRequestInitializer getInitializer(int index) {
+    return initializers.get(index);
   }
 }
