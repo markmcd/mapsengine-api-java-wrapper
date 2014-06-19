@@ -32,8 +32,8 @@ public class GeometryCollection extends Geometry {
   public GeometryCollection(Feature feature) {
     GeoJsonGeometry geometry = feature.getGeometry();
     if (!(geometry instanceof GeoJsonGeometryCollection)) {
-      throw new IllegalArgumentException("Feature is not a GeometryCollection: " +
-          geometry.getType());
+      throw new IllegalArgumentException("Feature is not a GeometryCollection: "
+          + geometry.getType());
     }
 
     GeoJsonGeometryCollection geometryCollection = (GeoJsonGeometryCollection) geometry;
