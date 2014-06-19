@@ -33,19 +33,52 @@ public class RateLimitedBackOffRequiredTest {
         + "  \"errors\": [\n"
         + "   {\n"
         + "    \"domain\": \"usageLimits\",\n"
-        + "    \"reason\": \"quotaExceeded\",\n"
-        + "    \"message\": \"Quota has been exceeded.\"\n"
+        + "    \"reason\": \"rateLimitExceeded\",\n"
+        + "    \"message\": \"Rate Limit Exceeded\"\n"
         + "   }\n"
         + "  ],\n"
         + "  \"code\": 403,\n"
-        + "  \"message\": \"Quota has been exceeded.\"\n"
+        + "  \"message\": \"Rate Limit Exceeded\"\n"
         + " }\n"
-        + "}";
+        + "}\n";
     InputStream apiErrorStream = new ByteArrayInputStream(apiErrorResponse.getBytes());
 
     // mock magic
     HttpResponse mockResponse = PowerMock.createNiceMock(HttpResponse.class);
     expect(mockResponse.getContentCharset()).andReturn(responseCharset).anyTimes();
+    expect(mockResponse.getContent()).andReturn(apiErrorStream);
+    replay(mockResponse);
+
+    // code under test
+    BackOffRequired backOff = new RateLimitedBackOffRequired();
+
+    Assert.assertTrue(backOff.isRequired(mockResponse));
+  }
+
+  @Test
+  public void testRetryHappensWithBackendError() throws Exception {
+    // typical response
+    Charset responseCharset = Charset.forName("UTF-8");
+    int statusCode = 503;
+    String apiResponse = "{\n"
+        + " \"error\": {\n"
+        + "  \"errors\": [\n"
+        + "   {\n"
+        + "    \"domain\": \"global\",\n"
+        + "    \"reason\": \"backendError\",\n"
+        + "    \"message\": \"A service exceeded the maximum allowed time.\"\n"
+        + "   }\n"
+        + "  ],\n"
+        + "  \"code\": 503,\n"
+        + "  \"message\": \"A service exceeded the maximum allowed time.\"\n"
+        + " }\n"
+        + "}\n";
+    InputStream apiErrorStream = new ByteArrayInputStream(apiResponse.getBytes());
+
+    // mock magic
+    HttpResponse mockResponse = PowerMock.createNiceMock(HttpResponse.class);
+    expect(mockResponse.getContentCharset()).andReturn(responseCharset).anyTimes();
+    expect(mockResponse.getStatusCode()).andReturn(statusCode).anyTimes();
     expect(mockResponse.getContent()).andReturn(apiErrorStream);
     replay(mockResponse);
 
@@ -83,9 +116,8 @@ public class RateLimitedBackOffRequiredTest {
 
     // code under test
     BackOffRequired backOff = new RateLimitedBackOffRequired();
-    boolean actual = backOff.isRequired(mockResponse);
 
-    Assert.assertEquals(false, actual);
+    Assert.assertFalse(backOff.isRequired(mockResponse));
   }
 
   @Test
@@ -97,14 +129,14 @@ public class RateLimitedBackOffRequiredTest {
         + "  \"errors\": [\n"
         + "   {\n"
         + "    \"domain\": \"usageLimits\",\n"
-        + "    \"reason\": \"quotaExceeded\",\n"
-        + "    \"message\": \"Quota has been exceeded.\"\n"
+        + "    \"reason\": \"rateLimitExceeded\",\n"
+        + "    \"message\": \"Rate Limit Exceeded\"\n"
         + "   }\n"
         + "  ],\n"
         + "  \"code\": 403,\n"
-        + "  \"message\": \"Quota has been exceeded.\"\n"
+        + "  \"message\": \"Rate Limit Exceeded\"\n"
         + " }\n"
-        + "}";
+        + "}\n";
     InputStream apiErrorStream = new ByteArrayInputStream(apiErrorResponse.getBytes());
 
     // mock magic
@@ -115,8 +147,7 @@ public class RateLimitedBackOffRequiredTest {
 
     // code under test
     BackOffRequired backOff = new RateLimitedBackOffRequired(new JacksonFactory());
-    boolean actual = backOff.isRequired(mockResponse);
 
-    Assert.assertEquals(true, actual);
+    Assert.assertTrue(backOff.isRequired(mockResponse));
   }
 }
