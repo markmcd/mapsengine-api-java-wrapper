@@ -19,7 +19,7 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
 
   protected static final List<String> QUOTA_EXCEEDED_REASONS =
       Arrays.asList("rateLimitExceeded", "userRateLimitExceeded");
-  private static final int BACKEND_ERROR_CODE = 503;
+  private static final List<Integer> RETRY_ERROR_CODES =  Arrays.asList(500, 503, 504);
 
   protected String responseBody;
   private JsonFactory jsonFactory;
@@ -43,8 +43,9 @@ public class RateLimitedBackOffRequired implements BackOffRequired {
   @Override
   public boolean isRequired(HttpResponse httpResponse) {
     try {
-      // Test for a 503 back-end error first, without consuming the InputStream
-      if (httpResponse.getStatusCode() == BACKEND_ERROR_CODE) {
+      // Test for back-end errors first, without consuming the InputStream
+      if (RETRY_ERROR_CODES.contains(httpResponse.getStatusCode())) {
+        responseBody = null;
         return true;
       }
 
