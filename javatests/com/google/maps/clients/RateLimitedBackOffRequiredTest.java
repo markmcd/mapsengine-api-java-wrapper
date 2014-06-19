@@ -51,9 +51,8 @@ public class RateLimitedBackOffRequiredTest {
 
     // code under test
     BackOffRequired backOff = new RateLimitedBackOffRequired();
-    boolean actual = backOff.isRequired(mockResponse);
 
-    Assert.assertEquals(true, actual);
+    Assert.assertTrue(backOff.isRequired(mockResponse));
   }
 
   @Test
@@ -117,9 +116,8 @@ public class RateLimitedBackOffRequiredTest {
 
     // code under test
     BackOffRequired backOff = new RateLimitedBackOffRequired();
-    boolean actual = backOff.isRequired(mockResponse);
 
-    Assert.assertEquals(false, actual);
+    Assert.assertFalse(backOff.isRequired(mockResponse));
   }
 
   @Test
@@ -149,8 +147,7 @@ public class RateLimitedBackOffRequiredTest {
 
     // code under test
     BackOffRequired backOff = new RateLimitedBackOffRequired(new JacksonFactory());
-    boolean actual = backOff.isRequired(mockResponse);
 
-    Assert.assertEquals(true, actual);
+    Assert.assertTrue(backOff.isRequired(mockResponse));
   }
 }
