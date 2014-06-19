@@ -39,4 +39,13 @@ public class HttpRequestInitializerPipeline implements HttpRequestInitializer {
       initializer.initialize(httpRequest);
     }
   }
+
+  /**
+   * Return the HttpRequestInitializer at the position specified.
+   * @param index  The index, ordering consistent with use in the constructor.
+   * @return The HttpRequestInitializer at position specified.
+   */
+  public HttpRequestInitializer getInitializer(int index) {
+    return initializers.get(index);
+  }
 }

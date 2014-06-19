@@ -6,15 +6,22 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Back-off only when the API response signals a "Quota Exceeded" error.
  */
-class RateLimitedBackOffRequired implements BackOffRequired {
+public class RateLimitedBackOffRequired implements BackOffRequired {
 
-  protected static final String QUOTA_EXCEEDED_REASON = "quotaExceeded";
+  protected static final List<String> QUOTA_EXCEEDED_REASONS =
+      Arrays.asList("rateLimitExceeded", "userRateLimitExceeded");
+  private static final List<Integer> RETRY_ERROR_CODES =  Arrays.asList(500, 503, 504);
 
+  protected String responseBody;
   private JsonFactory jsonFactory;
 
   /**
@@ -36,16 +43,41 @@ class RateLimitedBackOffRequired implements BackOffRequired {
   @Override
   public boolean isRequired(HttpResponse httpResponse) {
     try {
-      JsonObjectParser jsonParser = jsonFactory.createJsonObjectParser();
-      ApiErrorResponseJson apiError = jsonParser.parseAndClose(httpResponse.getContent(),
-          httpResponse.getContentCharset(), ApiErrorResponseJson.class);
-
-      // we will only retry if the *only* failure reason was due to quota
-      if (apiError != null && apiError.error != null && apiError.error.errors != null &&
-          apiError.error.errors.size() == 1 &&
-          QUOTA_EXCEEDED_REASON.equals(apiError.error.errors.get(0).reason)) {
+      // Test for back-end errors first, without consuming the InputStream
+      if (RETRY_ERROR_CODES.contains(httpResponse.getStatusCode())) {
+        responseBody = null;
         return true;
       }
+
+      // Copy the response body, leaving the stream open so that HttpResponse.execute() can use it.
+      Scanner scanner = new Scanner(httpResponse.getContent(),
+          httpResponse.getContentCharset().toString()).useDelimiter("\\A");
+      responseBody = scanner.next();
+      if (responseBody == null || responseBody.isEmpty()) {
+        return false;
+      }
+
+      // Parse the response as JSON.
+      JsonObjectParser jsonParser = jsonFactory.createJsonObjectParser();
+      ApiErrorResponseJson apiError = jsonParser.parseAndClose(
+          new ByteArrayInputStream(responseBody.getBytes()), httpResponse.getContentCharset(),
+          ApiErrorResponseJson.class);
+
+      // we will only retry if the *only* failure reason was due to a known error
+      if (apiError != null && apiError.error != null && apiError.error.errors != null
+          && apiError.error.errors.size() == 1) {
+        String reason = apiError.error.errors.get(0).reason;
+        if (QUOTA_EXCEEDED_REASONS.contains(reason)) {
+          return true;
+        }
+      }
+
+      // Known bug: Here the InputStream has been read, so any further dependencies on the
+      // stream will not find any data (specifically the getContent/getDetails methods in
+      // GoogleJsonResponseException). There is currently no way to mark/reset this stream or to
+      // throw a GoogleJsonResponseException as the HttpResponse class is final and can't be
+      // re-created with a new LowLevelHttpResponse. The output will be logged according to the
+      // default logging settings, at the CONFIG log level.
 
       return false;
     } catch (IOException e) {
