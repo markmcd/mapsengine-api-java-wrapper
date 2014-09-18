@@ -25,14 +25,14 @@ artifacts {
 }
 
 dependencies {
-    compile 'com.google.api-client:google-api-client:1.18.0-rc'
-    compile 'com.google.http-client:google-http-client-gson:1.18.0-rc'
-    compile 'com.google.apis:google-api-services-mapsengine:v1-rev12-1.18.0-rc'
-    testCompile group: 'junit', name: 'junit', version: '4.+'
+    compile 'com.google.api-client:google-api-client:1.19.0'
+    compile 'com.google.http-client:google-http-client-gson:1.19.0'
+    compile 'com.google.apis:google-api-services-mapsengine:v1-rev44-1.19.0'
+    testCompile group: 'junit', name: 'junit', version: '4.4'
     testCompile 'org.easymock:easymock:3.2'
-    testCompile 'org.powermock:powermock-module-junit4:1.5.4'
-    testCompile 'org.powermock:powermock-api-easymock:1.5.4'
-    testCompile 'com.google.http-client:google-http-client-jackson:1.18.0-rc'
+    testCompile 'org.powermock:powermock-module-junit4:1.5.6'
+    testCompile 'org.powermock:powermock-api-easymock:1.5.6'
+    testCompile 'com.google.http-client:google-http-client-jackson:1.19.0'
 }
 
 sourceSets {
