@@ -1,6 +1,8 @@
 Maps Engine API wrapper lib for Java
 ====================================
 
+![Build Status](https://travis-ci.org/googlemaps/mapsengine-api-java-wrapper.svg)&nbsp;![Maven Central Version](http://img.shields.io/maven-central/v/com.google.maps/mapsengine-api-java-wrapper.svg)
+
 Use [Google Maps Engine]?  Use the [API][maps-engine-api]?
 Use Java?  This helper library provides a little bit of sugar to make your life easier.
 ![Analytics](https://ga-beacon.appspot.com/UA-12846745-20/mapsengine-api-java-wrapper/readme?pixel)
