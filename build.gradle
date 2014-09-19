@@ -1,11 +1,20 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'provided-base'
 
 group = 'com.google.maps'
 
 repositories {
     mavenCentral()
+}
+
+// Import the 'provided' plugin for dependencies
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:1.12.+'
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -27,7 +36,7 @@ artifacts {
 dependencies {
     compile 'com.google.api-client:google-api-client:1.19.0'
     compile 'com.google.http-client:google-http-client-gson:1.19.0'
-    compile 'com.google.apis:google-api-services-mapsengine:v1-rev44-1.19.0'
+    provided 'com.google.apis:google-api-services-mapsengine:v1-rev44-1.19.0'
     testCompile group: 'junit', name: 'junit', version: '4.4'
     testCompile 'org.easymock:easymock:3.2'
     testCompile 'org.powermock:powermock-module-junit4:1.5.6'
